@@ -58,6 +58,13 @@ for each row execute function public.touch_updated_at();
 alter table public.boards      enable row level security;
 alter table public.saved_teams enable row level security;
 
+-- صلاحيات الـ Data API صريحة، عشان المشروع يشتغل حتى لو "Automatically expose new tables" مقفولة.
+-- الـ RLS policies اللي تحت هي اللي بتحدد مين يشوف/يعدل إيه.
+grant usage on schema public to anon, authenticated;
+grant select on public.boards to anon;
+grant select, insert, update, delete on public.boards      to authenticated;
+grant select, insert, update, delete on public.saved_teams to authenticated;
+
 -- صفحة الـ Display لازم تشتغل من غير login (OBS)، فالقراءة مفتوحة لأي حد معاه الـ id
 drop policy if exists "boards readable by link" on public.boards;
 create policy "boards readable by link" on public.boards
